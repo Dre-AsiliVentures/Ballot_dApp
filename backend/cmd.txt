@@ -1,0 +1,8 @@
+mkdir ballot-dapp && cd ballot-dapp
+mkdir backend && cd backend
+npm init -y
+npm install --save-dev hardhat
+npx hardhat init
+npm install --save-dev @nomicfoundation/hardhat-toolbox dotenv ethers
+npm install --save-dev ethers
+/--------------////////////////////------------
