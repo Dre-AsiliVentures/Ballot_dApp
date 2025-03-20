@@ -1,0 +1,15 @@
+ballot-dapp/
+│── frontend/        # React Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Ballot.js
+│   │   ├── App.js
+│   │   ├── index.js
+│   ├── package.json
+│── backend/         # Hardhat Smart Contract
+│   ├── contracts/
+│   │   ├── Ballot.sol
+│   ├── scripts/
+│   │   ├── deploy.js
+│   ├── hardhat.config.js
+│   ├── package.json
