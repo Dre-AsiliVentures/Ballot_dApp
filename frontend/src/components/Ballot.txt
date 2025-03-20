@@ -1,0 +1,138 @@
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import ballot from "../utils/ballotABI.json"; // Ensure this path is correct
+
+const ballotAddress = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"; // Deployed contract address
+const ballotABI = ballot.abi;
+
+function Ballot() {
+  const [proposals, setProposals] = useState([]);
+  const [newProposal, setNewProposal] = useState(""); // New proposal input
+  const [winner, setWinner] = useState("");
+  const [account, setAccount] = useState(null);
+  const [contract, setContract] = useState(null);
+
+  // Connect Wallet
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) {
+        alert("MetaMask is not installed. Please install it to use this app!");
+        return;
+      }
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const accounts = await provider.listAccounts();
+      setAccount(accounts[0]);
+      setContract(new ethers.Contract(ballotAddress, ballotABI, signer));
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+    }
+  };
+
+  const disconnectWallet = () => {
+    setAccount(null);
+  };
+
+  // Load Proposals using getProposals()
+  useEffect(() => {
+    const loadProposals = async () => {
+      if (!window.ethereum) return;
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(ballotAddress, ballotABI, signer);
+      setContract(contract);
+
+      try {
+        const proposalsArray = await contract.getProposals();
+        const formattedProposals = proposalsArray.map((proposal, index) => ({
+          id: index,
+          name: ethers.decodeBytes32String(proposal.name),
+          votes: proposal.voteCount.toString(),
+        }));
+        setProposals(formattedProposals);
+      } catch (error) {
+        console.error("Error fetching proposals:", error);
+      }
+    };
+
+    loadProposals();
+  }, []);
+
+  // Vote for a Proposal
+  const vote = async (proposalIndex) => {
+    if (contract) {
+      try {
+        const tx = await contract.vote(proposalIndex);
+        await tx.wait();
+        alert(`Voted successfully for proposal ${proposalIndex}`);
+  
+        // Update proposals state without page reload
+        const proposalsArray = await contract.getProposals();
+        const formattedProposals = proposalsArray.map((proposal, index) => ({
+          id: index,
+          name: ethers.decodeBytes32String(proposal.name),
+          votes: proposal.voteCount.toString(),
+        }));
+        setProposals(formattedProposals);
+      } catch (error) {
+        console.error("Error casting vote:", error);
+      }
+    }
+  };
+  // Add New Proposal
+  const addProposal = async () => {
+    if (contract && newProposal) {
+      try {
+        const tx = await contract.addProposal(ethers.encodeBytes32String(newProposal));
+        await tx.wait();
+        alert("Proposal added successfully!");
+  
+        setNewProposal(""); // Clear input field
+        // Instead of reload, update the proposals state
+        const proposalsArray = await contract.getProposals();
+        const formattedProposals = proposalsArray.map((proposal, index) => ({
+          id: index,
+          name: ethers.decodeBytes32String(proposal.name),
+          votes: proposal.voteCount.toString(),
+        }));
+        setProposals(formattedProposals);
+      } catch (error) {
+        console.error("Error adding proposal:", error);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <h2>Proposal Ballot</h2>
+      {account ? (
+        <button onClick={disconnectWallet}>{account.address}</button>
+      ) : (
+        <button onClick={connectWallet}>Connect Wallet</button>
+      )}
+
+      <h3>Proposals</h3>
+      <ul>
+        {proposals.map((proposal) => (
+          <li key={proposal.id}>
+            {proposal.name} - Votes: {proposal.votes}{" "}
+            <button onClick={() => vote(proposal.id)}>Vote</button>
+          </li>
+        ))}
+      </ul>
+
+      <h3>Add New Proposal</h3>
+      <input
+        type="text"
+        placeholder="Enter proposal name"
+        value={newProposal}
+        onChange={(e) => setNewProposal(e.target.value)}
+      />
+      <button onClick={addProposal}>Add Proposal</button>
+
+    </div>
+  );
+}
+
+export default Ballot;

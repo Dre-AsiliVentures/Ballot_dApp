@@ -1,0 +1,29 @@
+.addProposalContainer {
+    margin: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .inputField {
+    padding: 10px;
+    font-size: 1rem;
+    width: 80%;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .addButton {
+    background-color: #ffc107; /* Bootstrap yellow */
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .addButton:hover {
+    background-color: #e0a800;
+  }
+  

@@ -1,0 +1,43 @@
+.walletButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; /* Add spacing between icon and text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.connectButton {
+  background-color: #27ae60; /* Green */
+}
+
+.connectButton:hover {
+  background-color: #1e8449;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.connectButton:active {
+  transform: scale(0.95);
+}
+
+.disconnectButton {
+  background-color: #e74c3c; /* Red */
+}
+
+.disconnectButton:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.disconnectButton:active {
+  transform: scale(0.95);
+}
